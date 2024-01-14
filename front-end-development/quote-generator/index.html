@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Quote Generator</title>
+        <style>
+            :root {
+                --bc-color: #2f333b;
+                --quote-box: white;
+            }
+            
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+                
+            html {
+                font-family: sans-serif;
+                font-size: 30px;
+                scroll-behavior: smooth;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background-color: var(--bc-color);
+                transition: background-color 0.5s ease;
+            }
+            
+            #quote-box {
+                width: 550px;
+                padding: 5px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background-color: white;
+                border-radius: 10px;
+                background-color: var(--quote-box);
+                transition: background-color 0.5s ease;
+                visibility: hidden;
+            }
+            
+            #quote-text {
+                margin-top: 20px;
+                max-width: 70%;
+                text-align: center;
+                color: var(--bc-color);
+            }
+            
+            
+            #quote {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            #author {
+                width: 70%;
+                text-align: right;
+                margin-top: 10px;
+                margin-bottom: 25px;
+                font-size: 20px;
+                color: var(--bc-color);
+            }
+            
+            #links {
+                height: 50px;
+                display: flex;
+                width: 70%;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 20px;
+            }
+            
+            #share-links {
+                font-size: 40px;
+            }
+            
+            .icon {
+                color: var(--bc-color);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            
+            .icon:hover {
+                transform: scale(1.6);
+            }
+            
+            #tweet-quote, #tumblr-quote {
+                text-decoration: none;
+            }
+            
+            #tweet-quote :hover {
+                color: #1DA1F2;
+            }
+            
+            #tumblr-quote :hover {
+                color: #36465D;
+            }
+            
+            #new-quote {
+                background-color: var(--bc-color);
+                height: 40px;
+                width: 150px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 5px;
+                color: var(--quote-box);
+                transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.5s ease;
+                font-size: 15px;
+                border: none;
+            }
+            
+            #new-quote:hover {
+                transform: scale(1.1);
+            }
+            
+            a:hover, button:hover {
+                cursor: pointer;
+            }
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script>
+            let colors = [
+            '#16a085',
+            '#27ae60',
+            '#2c3e50',
+            '#f39c12',
+            '#e74c3c',
+            '#9b59b6',
+            '#FB6964',
+            '#342224',
+            '#472E32',
+            '#BDBB99',
+            '#77B1A9',
+            '#73A857'
+            ];
+            let quotes;
+
+            //On document load
+            $(document).ready(function(){
+            //Get the quotes json file from my server
+            $.get('https://finlaytech.ca/quotes/fortniteQuotes.json', function(quotesData) {
+                quotes = quotesData.quotes;
+                //Log the data
+                console.log(quotes);
+                //Display a quote
+                displayQuote();
+                //Display a quote when the button is clicked
+                $('#new-quote').on('click', displayQuote);
+            })
+            });
+
+            //Displays a new quote
+            function displayQuote() {
+            
+            //Get the current color from root
+            let currentColor = $(':root').css('--bc-color');
+            
+            //Toggle the quote-box
+            $('#quote-box').fadeToggle(500);
+            
+            //Change the current color to a new color
+            let randomColor = Math.floor(Math.random() * colors.length);
+            currentColor = colors[randomColor];
+            setTimeout(function() {
+                $(':root').css('--bc-color', currentColor);
+            }, 500);
+            
+            //Change the quote and links
+            let randomQuote = Math.floor(Math.random() * quotes.length);
+            let quoteObject = quotes[randomQuote];
+            let currentQuote = quoteObject.quote;
+            let currentAuthor = quoteObject.author;
+            setTimeout(function() {
+                $('#text').text(currentQuote);
+                $('#author').text(currentAuthor);
+                $('#quote-box').css('visibility','visible');
+                $('#tweet-quote').attr(
+                'href',
+                'https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=' +
+                    encodeURIComponent('"' + currentQuote + '" ' + currentAuthor)
+                );
+
+                $('#tumblr-quote').attr(
+                'href',
+                'https://www.tumblr.com/widgets/share/tool?posttype=quote&tags=quotes,freecodecamp&caption=' +
+                    encodeURIComponent(currentAuthor) +
+                    '&content=' +
+                    encodeURIComponent(currentQuote) +
+                    '&canonicalUrl=https%3A%2F%2Fwww.tumblr.com%2Fbuttons&shareSource=tumblr_share_button'
+                );
+                }, 500);
+            
+            //Toggle the quote-box again
+            setTimeout(function() {
+                $('#quote-box').fadeToggle(500);
+            }, 1000);
+            }
+        </script>
+        <script src="https://kit.fontawesome.com/2d6a33e743.js" crossorigin="anonymous"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+        <div id="quote-box">
+        <div id="quote-text">
+        <i class="fa fa-quote-left"></i>
+        <span id="text"></span>
+        </div>
+        <span id="author"></span>
+        <div id="links">
+        <div id="share-links">
+            <a id="tweet-quote" title="Tweet this quote!" target="_top">
+            <i class="icon fa-brands fa-square-twitter"></i>
+            </a>
+            <a id="tumblr-quote" title="Post this quote on tumblr!" target="_top">
+            <i class="icon fa-brands fa-square-tumblr"></i>
+            </a>
+        </div>
+        <button id="new-quote">New Quote</button>
+        </div>
+    </div>
+    </body>
+</html>
