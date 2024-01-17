@@ -3,4 +3,4 @@
 </IfModule>
 Options -Indexes
 ServerSignature off
-ErrorDocument 404 /pages/404
+ErrorDocument 404 /var/www/html/pages/404
